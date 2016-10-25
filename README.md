@@ -43,6 +43,39 @@ npm run dev
 $ npm install --save electrode-react-ssr-caching
 ```
 
+* Import SSRCaching in `hapiApp/src/server.js`
+
+```js
+import SSRCaching from "electrode-react-ssr-caching";
+```
+
+### *** Important Notes ***
+* Make sure the `electrode-react-ssr-caching` module is imported first followed by the imports of `react` and `react-dom` module.
+* SSR caching will not work if the ordering is changed since caching module has to have a chance to patch react's code first.
+* If you are importing `electrode-react-ssr-caching`, `react` and `react-dom` in the same file, make sure
+you are using all `require` or all `import`. Found that SSR caching was NOT working if, `electrode-react-ssr-caching`
+is `require`d first and then `react` and `react-dom` is imported.
+
+* Enable caching by adding the configuration code in `hapiApp/src/server.js`
+
+```js
+const cacheConfig = {
+  components: {
+    SSRCachingTemplateType: {
+      strategy: "template",
+      enable: true
+    },
+    SSRCachingSimpleType: {
+      strategy: "simple",
+      enable: true
+    }
+  }
+};
+
+SSRCaching.enableCaching();
+SSRCaching.setCachingConfig(cacheConfig);
+```
+
 ### <a name="ssr-demo-code"></a>SSR Demo Code
 * In order to test Server Side Rendering functionality, we need to add a few files:
 
@@ -133,38 +166,6 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps
 )(SSRCachingTemplateTypeWrapper);
-```
-
-* Import SSRCaching in `hapiApp/src/server.js`
-
-```js
-import SSRCaching from "electrode-react-ssr-caching";
-```
-### *** Important Notes ***
-* Make sure the `electrode-react-ssr-caching` module is imported first followed by the imports of `react` and `react-dom` module.
-* SSR caching will not work if the ordering is changed since caching module has to have a chance to patch react's code first.
-* If you are importing `electrode-react-ssr-caching`, `react` and `react-dom` in the same file, make sure
-you are using all `require` or all `import`. Found that SSR caching was NOT working if, `electrode-react-ssr-caching`
-is `require`d first and then `react` and `react-dom` is imported.
-
-* Enable caching by adding the configuration code in `hapiApp/src/server.js`
-
-```js
-const cacheConfig = {
-  components: {
-    SSRCachingTemplateType: {
-      strategy: "template",
-      enable: true
-    },
-    SSRCachingSimpleType: {
-      strategy: "simple",
-      enable: true
-    }
-  }
-};
-
-SSRCaching.enableCaching();
-SSRCaching.setCachingConfig(cacheConfig);
 ```
 
 * To read more, go to [electrode-react-ssr-caching](https://github.com/electrode-io/electrode-react-ssr-caching)
