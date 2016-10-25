@@ -11,29 +11,145 @@ It supports 2 types of caching:
 * Simple - Component Props become the cache key. This is useful for cases like Header and Footer where the number of variations of props data is minimal which will make sure the cache size stays small.
 * Template - Components Props are first tokenized and then the generated template html is cached. The idea is akin to generating logic-less handlebars template from your React components and then use string replace to process the template with different props. This is useful for cases like displaying Product information in a Carousel where you have millions of products in the repository.
 
-### Install
+## Instructions
+* This guide used the following node.js versions when it was created:
+```
+* node version 7.0.0
+* npm version 3.10.9
+```
+
+### <a name="hapijs-server"></a>Hapijs Server
+* Let's use the [hapi-universal-redux] repo to scaffold our app.
+* Create a hapi app using the following:
+
+```bash
+git clone https://github.com/luandro/hapi-universal-redux.git hapiApp
+cd hapiApp
+npm install
+```
+
+* Ensure that you have a working app by running the following:
+
+```bash
+npm run dev
+```
+
+* From your browser, navigate to `http://localhost:8000` to see the default web page
+
+### <a name="ssr-caching"></a>Electrode React SSR Caching Install
+* Install the [electrode-react-ssr-caching] module with the following:
+
 ```bash
 $ npm install --save electrode-react-ssr-caching
 ```
 
-### Wiring
+### <a name="ssr-demo-code"></a>SSR Demo Code
+* In order to test Server Side Rendering functionality, we need to add a few files:
 
-####GOTCHA:
+* For simple strategy, add the following:
 
-- SSR caching of components only works in PRODUCTION mode, since the props(which are read only) are mutated for caching purposes and mutating of props is not allowed in development mode by react.
-
-- Make sure the `electrode-react-ssr-caching` module is imported first followed by the imports of react and react-dom module. SSR caching will not work if the ordering is changed since caching module has to have a chance to patch react's code first. Also if you are importing `electrode-react-ssr-caching`, `react`  and `react-dom` in the same file , make sure you are using all `require` or all `import`. Found that SSR caching was NOT working if, `electrode-react-ssr-caching` is `require`d first and then `react` and `react-dom` is imported.
-
----
-
-To demonstrate functionality, we have added:
-
-* `src/components/SSRCachingSimpleType.js` for Simple strategy.
-* `src/components/SSRCachingTemplateType.jsx` for Template strategy.
-* To enable caching using `electrode-react-ssr-caching`, we need to do the below configuration in `src/server.js`.
+`hapiApp/src/components/SSRCachingSimpleType.js`
 
 ```js
+import React from "react";
+import { connect } from "react-redux";
 
+class SSRCachingSimpleTypeWrapper extends React.Component {
+  render() {
+    const count = this.props.count;
+
+    var elements = [];
+
+    for(var i = 0; i < count; i++) {
+      elements.push(<SSRCachingSimpleType key={i} navEntry={"NavEntry" + i}/>);
+    }
+
+    return (
+      <div>
+        {elements}
+      </div>
+    );
+  }
+}
+
+class SSRCachingSimpleType extends React.Component {
+  render() {
+    return (
+      <div>
+        <p>{this.props.navEntry}</p>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  count: state.count
+})
+
+export default connect(
+  mapStateToProps
+)(SSRCachingSimpleTypeWrapper);
+```
+
+* For Template strategy, add the following:
+
+`hapiApp/src/components/SSRCachingTemplateType.js`
+
+```js
+import React from "react";
+import { connect } from "react-redux";
+
+class SSRCachingTemplateTypeWrapper extends React.Component {
+  render() {
+    const count = this.props.count;
+    var elements = [];
+
+    for(var i = 0; i < count; i++) {
+      elements.push(<SSRCachingTemplateType key={i} name={"name"+i} title={"title"+i} rating={"rating"+i}/>);
+    }
+
+    return (
+      <div>
+        { elements }
+      </div>
+    );
+  }
+}
+
+class SSRCachingTemplateType extends React.Component {
+  render() {
+    return (
+      <div>
+        <p>{this.props.name} and {this.props.title} and {this.props.rating}</p>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  count: state.count
+})
+
+export default connect(
+  mapStateToProps
+)(SSRCachingTemplateTypeWrapper);
+```
+
+* Import SSRCaching in `hapiApp/src/server.js`
+
+```js
+import SSRCaching from "electrode-react-ssr-caching";
+```
+### *** Important Notes ***
+* Make sure the `electrode-react-ssr-caching` module is imported first followed by the imports of `react` and `react-dom` module.
+* SSR caching will not work if the ordering is changed since caching module has to have a chance to patch react's code first.
+* If you are importing `electrode-react-ssr-caching`, `react` and `react-dom` in the same file, make sure
+you are using all `require` or all `import`. Found that SSR caching was NOT working if, `electrode-react-ssr-caching`
+is `require`d first and then `react` and `react-dom` is imported.
+
+* Enable caching by adding the configuration code in `hapiApp/src/server.js`
+
+```js
 const cacheConfig = {
   components: {
     SSRCachingTemplateType: {
@@ -53,6 +169,9 @@ SSRCaching.setCachingConfig(cacheConfig);
 
 * To read more, go to [electrode-react-ssr-caching](https://github.com/electrode-io/electrode-react-ssr-caching)
 
+- SSR caching of components only works in PRODUCTION mode, since the props(which are read only) are mutated for caching purposes and mutating of props is not allowed in development mode by react.
+
 ---
 
 [electrode-react-ssr-caching]: https://github.com/electrode-io/electrode-react-ssr-caching
+[hapi-universal-redux]: https://github.com/luandro/hapi-universal-redux
