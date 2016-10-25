@@ -2,6 +2,7 @@ import babelPolyfill from "babel-polyfill";
 import { Server } from "hapi";
 import h2o2 from "h2o2";
 import inert from "inert";
+import SSRCaching from "electrode-react-ssr-caching";
 import React from "react";
 import ReactDOM from "react-dom/server";
 import { RouterContext, match } from "react-router";
@@ -144,3 +145,19 @@ if (__DEV__) {
 		});
 	}
 }
+
+const cacheConfig = {
+	components: {
+		SSRCachingTemplateType: {
+			strategy: "template",
+			enable: true
+		},
+		SSRCachingSimpleType: {
+			strategy: "simple",
+			enable: true
+		}
+	}
+};
+
+SSRCaching.enableCaching();
+SSRCaching.setCachingConfig(cacheConfig);

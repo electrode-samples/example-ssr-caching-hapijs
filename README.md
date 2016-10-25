@@ -40,7 +40,7 @@ npm run dev
 * Install the [electrode-react-ssr-caching] module with the following:
 
 ```bash
-$ npm install --save electrode-react-ssr-caching
+npm install --save electrode-react-ssr-caching
 ```
 
 * Import SSRCaching in `hapiApp/src/server.js`
@@ -85,7 +85,7 @@ SSRCaching.setCachingConfig(cacheConfig);
 
 ```js
 import React from "react";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 
 class SSRCachingSimpleTypeWrapper extends React.Component {
   render() {
@@ -93,11 +93,11 @@ class SSRCachingSimpleTypeWrapper extends React.Component {
 
     var elements = [];
 
-    for(var i = 0; i < count; i++) {
-      elements.push(<SSRCachingSimpleType key={i} navEntry={"NavEntry" + i}/>);
-    }
+	for (var i = 0; i < count; i++) {
+      elements.push(<SSRCachingSimpleType key={i} navEntry={"NavEntry" + i} />);
+	}
 
-    return (
+	return (
       <div>
         {elements}
       </div>
@@ -109,15 +109,15 @@ class SSRCachingSimpleType extends React.Component {
   render() {
     return (
       <div>
-        <p>{this.props.navEntry}</p>
-      </div>
+	    <p>{this.props.navEntry}</p>
+	  </div>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
-  count: state.count
-})
+    count: state.count
+});
 
 export default connect(
   mapStateToProps
