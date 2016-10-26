@@ -168,7 +168,63 @@ export default connect(
 )(SSRCachingTemplateTypeWrapper);
 ```
 
-* To read more, go to [electrode-react-ssr-caching](https://github.com/electrode-io/electrode-react-ssr-caching)
+* Add the routes to our new components. Replace the contents of `hapiApp/src/routes.js` with the following:
+
+```js
+import React from 'react';
+import { Router, Route } from 'react-router';
+import Home from './components/Home';
+import SSRCachingTemplateType from "./components/SSRCachingTemplateType";
+import SSRCachingSimpleType from "./components/SSRCachingSimpleType";
+
+module.exports = (
+  <Router>
+    <Route>
+      <Route path="/" component={Home} />
+	  <Route path="/ssrcachingtemplatetype" component={SSRCachingTemplateType} />
+      <Route path="/ssrcachingsimpletype" component={SSRCachingSimpleType} />
+    </Route>
+  </Router>
+);
+```
+
+* Wire up the home page with our new routes. Replace the contents of `hapiApp/src/components/Home.js` with the following:
+
+```js
+import React from "react";
+
+export default class Home extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello <a href="https://github.com/electrode-io">Electrode</a></h1>
+        <h2>Demonstration Components</h2>
+        <ul>
+          <li className="ssr simple">
+            <a href="/ssrcachingsimpletype">
+              SSR Caching - Simple
+            </a>
+            <p>Component Props become the cache key. This is useful for cases like Header and Footer where the number
+            of variations of props data is minimal which will make sure the cache size stays small.</p>
+          </li>
+          <li className="ssr caching">
+            <a href="/ssrcachingtemplatetype">
+              SSR Caching- Template Type
+            </a>
+            <p>Components Props are first tokenized and then the generated template html is cached. The idea is akin to
+            generating logic-less handlebars template from your React components and then use string replace to process
+            the template with different props. This is useful for cases like displaying Product information in a
+            Carousel where you have millions of products in the repository.</p>
+          </li>
+        </ul>
+	  </div>
+    );
+  }
+}
+```
+
+
+* To read more, go to [electrode-react-ssr-caching]
 
 - SSR caching of components only works in PRODUCTION mode, since the props(which are read only) are mutated for caching purposes and mutating of props is not allowed in development mode by react.
 

@@ -1,39 +1,30 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import User from './User';
+import React from "react";
 
-const Home = ({ styles, stargazers }) => (
-	<div>
-		<h3>Features</h3>
-	    	<ul>
-		    	<li><span style={styles.feature}>Redux</span> for managing app state</li>
-		    	<li><span style={styles.feature}>Redux DevTools</span> for state time travelling</li>
-		    	<li><span style={styles.feature}>React Transform</span> for instant client updates</li>
-		    	<li>Fully automated with npm run scripts</li>
-		    	<li>Server hot reloads with <span style={styles.feature}>piping</span> and Hapi.js</li>
-		    	<li><span style={styles.feature}>Webpack</span> for watch + production builds</li>
-		    	<li><span style={styles.feature}>React</span> and <span style={styles.feature}>React Router</span> on the client and server</li>
-		    	<li><span style={styles.feature}>Babel</span> automatically compiles ES6 + ES7</li>
-		    	<li><span style={styles.feature}>Radium</span> for advanced inline styling</li>
-	    	</ul>
-	    	<p>
-	    		In short – <em>an excellent choice</em>.
-	    		Ready to start{'?'}
-	    	</p>
-		<h3>
-    		Community
-    	</h3>
-    	{stargazers.map((user, key) => {
-			return <User key={key} user={user} styles={styles} />
-		})}
-	</div>
-)
-
-/**
- * Connect to Redux store.
- */
-export default connect(
-	state => ({
-		stargazers: state.stargazers.users,
-	})
-)(Home)
+export default class Home extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello <a href="https://github.com/electrode-io">Electrode</a></h1>
+        <h2>Demonstration Components</h2>
+        <ul>
+          <li className="ssr simple">
+            <a href="/ssrcachingsimpletype">
+              SSR Caching - Simple
+            </a>
+            <p>Component Props become the cache key. This is useful for cases like Header and Footer where the number
+            of variations of props data is minimal which will make sure the cache size stays small.</p>
+          </li>
+          <li className="ssr caching">
+            <a href="/ssrcachingtemplatetype">
+              SSR Caching- Template Type
+            </a>
+            <p>Components Props are first tokenized and then the generated template html is cached. The idea is akin to
+            generating logic-less handlebars template from your React components and then use string replace to process
+            the template with different props. This is useful for cases like displaying Product information in a
+            Carousel where you have millions of products in the repository.</p>
+          </li>
+        </ul>
+	  </div>
+    );
+  }
+}
