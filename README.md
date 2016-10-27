@@ -14,8 +14,8 @@ It supports 2 types of caching:
 ## Instructions
 * This guide used the following node.js versions when it was created:
 ```
-* node version 7.0.0
-* npm version 3.10.9
+* node version 4.4.3
+* npm version 3.8.7
 ```
 
 ### <a name="hapijs-server"></a>Hapijs Server
