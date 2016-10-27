@@ -16,7 +16,7 @@ let routes = routesContainer;
 /**
  * Create Redux store, and get intitial state.
  */
-const store = configureStore();
+const store = configureStore({count: 100});
 const initialState = store.getState();
 /**
  * Start Hapi server

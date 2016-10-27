@@ -12,11 +12,6 @@ It supports 2 types of caching:
 * Template - Components Props are first tokenized and then the generated template html is cached. The idea is akin to generating logic-less handlebars template from your React components and then use string replace to process the template with different props. This is useful for cases like displaying Product information in a Carousel where you have millions of products in the repository.
 
 ## Instructions
-* This guide used the following node.js versions when it was created:
-```
-* node version 4.4.3
-* npm version 3.8.7
-```
 
 ### <a name="hapijs-server"></a>Hapijs Server
 * Let's use the [hapi-universal-redux] repo to scaffold our app.
@@ -223,10 +218,47 @@ export default class Home extends React.Component {
 }
 ```
 
+### Redux Configuration
+
+* From `hapiApp/src/server.js` replace the line:
+
+```
+const store = configureStore();
+```
+
+with:
+
+```
+const store = configureStore({count: 100});
+```
+
+* Replace the contents of `hapiApp/src/reducers/index.js` with the following:
+
+```js
+import { combineReducers } from 'redux';
+import { routerReducer } from 'react-router-redux'
+
+const rootReducer = combineReducers({
+  routing: routerReducer,
+  count: (s=100, a) => s
+});
+
+export default rootReducer;
+```
+
+* Run the server:
+
+```bash
+npm run production
+```
+
+* Navigate to the url and port number displayed in the terminal, both links for for Simple and Template Type should return a list of 100 items
+
+### *** Important Notes ***
+* SSR caching of components only works in PRODUCTION mode, since the props(which are read only) are mutated for caching purposes and mutating of props is not allowed in development mode by react.
+
 
 * To read more, go to [electrode-react-ssr-caching]
-
-- SSR caching of components only works in PRODUCTION mode, since the props(which are read only) are mutated for caching purposes and mutating of props is not allowed in development mode by react.
 
 ---
 
